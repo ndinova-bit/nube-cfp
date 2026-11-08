@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NUBE · Asistente de conducción</title>
+<meta name="theme-color" content="#0b0603">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NUBE">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Share+Tech+Mono&display=swap">
+<style>
+:root{--c:#ff9a2e;--c2:#a85a10;--rgb:255,154,46;--bg:#0b0603;--ok:#7dffb0;--warn:#ffd23f;--bad:#ff5d5d}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{background:radial-gradient(ellipse at 50% 10%,#2a1507 0%,var(--bg) 65%) fixed;color:var(--c);font-family:'Share Tech Mono','Courier New',monospace;min-height:100vh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(var(--rgb),.035) 0 1px,transparent 1px 3px);pointer-events:none;z-index:5}
+.wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:14px 14px 40px}
+.hide{display:none!important}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:11px;letter-spacing:.12em;color:var(--c2)}
+header b{font-family:Orbitron,sans-serif;color:var(--c);font-size:13px;letter-spacing:.3em}
+.clock{text-align:right}.clock .t{font-family:Orbitron,sans-serif;font-size:22px;color:var(--c);text-shadow:0 0 12px var(--c)}
+#cv{display:block;width:100%;height:min(52vw,250px)}
+.greet{text-align:center;font-family:Orbitron,sans-serif;font-size:14px;letter-spacing:.12em;text-shadow:0 0 10px var(--c);min-height:20px}
+.status{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12px}
+.pill{border:1px solid rgba(var(--rgb),.45);border-radius:20px;padding:4px 12px;letter-spacing:.06em}
+.pill.live{color:var(--ok);border-color:var(--ok)}.pill.off{color:var(--warn);border-color:var(--warn)}.pill.err{color:var(--bad);border-color:var(--bad)}
+button,.b{background:transparent;border:1px solid var(--c);color:var(--c);font-family:Orbitron,sans-serif;font-size:10px;letter-spacing:.14em;padding:8px 14px;cursor:pointer;border-radius:14px}
+button:active{background:rgba(var(--rgb),.2)}button.sel{background:rgba(var(--rgb),.22)}
+#note{text-align:center;font-size:11px;color:var(--c2);margin-top:6px;min-height:14px}
+h3{font-family:Orbitron,sans-serif;font-size:11px;letter-spacing:.24em;color:var(--c2);margin:22px 0 10px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.k{border:1px solid rgba(var(--rgb),.3);background:linear-gradient(160deg,rgba(40,20,6,.75),rgba(12,6,2,.85));border-radius:18px 4px 18px 4px;padding:12px}
+.k .n{font-family:Orbitron,sans-serif;font-size:26px;font-weight:800;text-shadow:0 0 12px var(--c)}
+.k .l{font-size:10.5px;color:#e0a26a;margin-top:2px;letter-spacing:.06em}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.al{border-left:3px solid var(--warn);background:rgba(40,20,6,.6);padding:9px 12px;font-size:12.5px;line-height:1.45;color:#ffd2a1;border-radius:0 10px 10px 0}
+.al.bad{border-color:var(--bad)}.al.ok{border-color:var(--ok)}.al b{color:var(--c);font-weight:normal}
+.card{border:1px solid rgba(var(--rgb),.3);background:rgba(12,6,2,.7);border-radius:18px;padding:12px 14px;margin-bottom:10px}
+.card h4{font-family:Orbitron,sans-serif;font-size:10.5px;letter-spacing:.14em;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
+.hb{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px}
+.hb .t{flex:1.3;color:#e0a26a;line-height:1.25}.hb .tr{flex:1;height:7px;background:rgba(var(--rgb),.12);border-radius:4px;overflow:hidden}
+.hb .tr i{display:block;height:100%;background:linear-gradient(90deg,var(--c2),var(--c));border-radius:4px}.hb .v{width:64px;text-align:right}
+.ri{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:6px 0;border-top:1px dashed rgba(var(--rgb),.2);color:#ffd2a1}
+.ri:first-of-type{border-top:0}.ri small{color:var(--c2)}
+.login{max-width:380px;margin:12vh auto 0;text-align:center}
+.login h1{font-family:Orbitron,sans-serif;font-size:26px;letter-spacing:.4em;text-shadow:0 0 14px var(--c);margin:8px 0 4px}
+.login p{font-size:12px;color:var(--c2);margin-bottom:18px}
+input{width:100%;background:rgba(12,6,2,.85);border:1px solid rgba(var(--rgb),.4);color:var(--c);font:inherit;padding:12px;outline:none;font-size:16px;border-radius:12px;margin-bottom:10px}
+input:focus{box-shadow:0 0 12px rgba(var(--rgb),.4)}
+#err{color:var(--bad);font-size:12px;min-height:18px;margin-bottom:8px}
+.muted{font-size:11px;color:var(--c2);line-height:1.5}
+footer{text-align:center;margin-top:24px;font-size:10px;letter-spacing:.18em;color:#6b3d10}
+</style>
+</head>
+<body>
+
+<div class="wrap hide" id="vLogin">
+  <div class="login">
+    <canvas id="cvL" width="300" height="150" style="width:100%;max-width:300px"></canvas>
+    <h1>NUBE</h1>
+    <p>ASISTENTE DE CONDUCCIÓN · FP</p>
+    <form id="fLogin" autocomplete="on">
+      <input id="em" type="email" name="email" placeholder="Email de la plataforma" autocomplete="username" inputmode="email" required>
+      <input id="pw" type="password" name="password" placeholder="Contraseña" autocomplete="current-password" required>
+      <div id="err" role="alert"></div>
+      <button type="submit" id="bLogin" style="width:100%;padding:12px">INGRESAR</button>
+    </form>
+    <p class="muted" style="margin-top:16px">Usá el mismo email y contraseña de la plataforma. Solo el personal autorizado ve los datos.</p>
+  </div>
+</div>
+
+<div class="wrap hide" id="vApp">
+  <header>
+    <div><b>N U B E</b><br><span id="who">—</span></div>
+    <div class="clock"><div class="t" id="time">--:--:--</div><div id="date">--</div></div>
+  </header>
+  <canvas id="cv" aria-label="Nube animada"></canvas>
+  <div class="greet" id="greet"></div>
+  <div class="status">
+    <span class="pill off" id="pill">CONECTANDO…</span>
+    <button id="bRefresh">ACTUALIZAR</button>
+    <button id="bOut">SALIR</button>
+  </div>
+  <div id="note"></div>
+  <div class="status" style="margin-top:12px"><span class="muted">CICLO</span><button data-ciclo="2026" class="sel">2026</button><button data-ciclo="2027">2027</button></div>
+
+  <h3>▸ ALERTAS</h3><div class="alerts" id="alerts"></div>
+  <h3>▸ INDICADORES</h3><div class="kpis" id="kpis"></div>
+  <h3>▸ ASISTENCIA POR TRAYECTO</h3><div class="card" id="tray"></div>
+  <h3>▸ EN RIESGO DE DESVINCULARSE</h3><div id="riesgo"></div>
+  <h3>▸ ÚLTIMO RESUMEN SEMANAL</h3><div class="card" id="resumen"></div>
+  <h3>▸ AGENDA</h3>
+  <div class="kpis"><div class="k"><div class="n" id="d1">--</div><div class="l">DÍAS PARA CANCÚN (27/11)</div></div><div class="k"><div class="n" id="d2">--</div><div class="l">DÍAS PARA EL CURSO (8/3/2027)</div></div></div>
+  <div class="muted" id="inst" style="margin-top:18px"></div>
+  <footer>NUBE · SOLO LECTURA</footer>
+</div>
+
+<script src="core.js"></script>
+<script>
+const $=id=>document.getElementById(id), {esc,makeClient,summarize,publicCache}=NubeCore, TZ='America/Argentina/Buenos_Aires';
+const client=makeClient({fetch:(...a)=>fetch(...a),storage:localStorage,now:()=>Date.now()});
+let ciclo=new Date().getFullYear()>2026?new Date().getFullYear():2026, boost=0, rgb='255,154,46', busy=false;
+
+/* ---------- Nube de partículas (se reutiliza en login y panel) ---------- */
+function cloud(cv,n){
+  const ctx=cv.getContext('2d');let W,H,P=[];
+  const blobs=[[.27,.64,.15],[.42,.47,.22],[.63,.50,.19],[.77,.65,.14],[.50,.70,.18]];
+  const inside=(x,y)=>{for(const[bx,by,br]of blobs){const dx=(x-bx)*(W/H),dy=y-by;if(dx*dx+dy*dy<(br*1.15)**2)return true}return y>.62&&y<.84&&x>.22&&x<.84};
+  function build(){const r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);W=r.width||300;H=r.height||150;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);P=[];let t=0;
+    while(P.length<n&&t++<40000){const x=.12+Math.random()*.76,y=.12+Math.random()*.8;if(inside(x,y))P.push({hx:x*W,hy:y*H,x:W/2,y:H/2,vx:0,vy:0,ph:Math.random()*6.28,s:Math.random()*1.5+.7})}}
+  function frame(t){ctx.clearRect(0,0,W,H);const br=1+Math.sin(t/900)*.012+boost*.06;
+    for(const p of P){const tx=W/2+(p.hx-W/2)*br+Math.sin(t/1400+p.ph)*4,ty=H/2+(p.hy-H/2)*br+Math.cos(t/1700+p.ph)*4;p.vx+=(tx-p.x)*.035;p.vy+=(ty-p.y)*.035;
+      if(boost>0){p.vx+=(Math.random()-.5)*boost*2.4;p.vy+=(Math.random()-.5)*boost*2.4}p.vx*=.86;p.vy*=.86;p.x+=p.vx;p.y+=p.vy}
+    boost*=.93;ctx.lineWidth=.6;
+    for(let i=0;i<P.length;i++){const a=P[i];for(let j=i+1;j<P.length;j++){const b=P[j],dx=a.x-b.x;if(dx>32||dx<-32)continue;const dy=a.y-b.y,d=dx*dx+dy*dy;if(d<1000){ctx.strokeStyle='rgba('+rgb+','+(.28*(1-d/1000))+')';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}}
+    ctx.shadowColor='rgb('+rgb+')';ctx.shadowBlur=7;
+    for(const p of P){ctx.fillStyle='rgba('+rgb+','+(.55+.4*Math.sin(t/500+p.ph))+')';ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,6.283);ctx.fill()}
+    ctx.shadowBlur=0;requestAnimationFrame(frame)}
+  build();requestAnimationFrame(frame);addEventListener('resize',build);cv.addEventListener('pointerdown',()=>boost=1.5);
+}
+
+/* ---------- Pantallas ---------- */
+function show(login){$('vLogin').classList.toggle('hide',!login);$('vApp').classList.toggle('hide',login);if(login)$('pw').value='';setTimeout(()=>dispatchEvent(new Event('resize')),0)}
+function tick(){const n=new Date();$('time').textContent=n.toLocaleTimeString('es-AR',{hour12:false,timeZone:TZ});$('date').textContent=n.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short',timeZone:TZ}).toUpperCase()}
+setInterval(tick,1000);tick();
+const days=d=>Math.max(0,Math.ceil((new Date(d+'T00:00:00-03:00')-new Date())/864e5));
+$('d1').textContent=days('2026-11-27');$('d2').textContent=days('2027-03-08');
+const hh=+new Date().toLocaleString('es-AR',{hour:'numeric',hour12:false,timeZone:TZ});
+function greet(){const m=(hh<6?'Buenas madrugadas':hh<13?'Buenos días':hh<20?'Buenas tardes':'Buenas noches')+'.';let i=0;(function t(){$('greet').textContent=m.slice(0,i++);if(i<=m.length)setTimeout(t,40)})()}
+
+function setStatus(kind,txt,note){const p=$('pill');p.className='pill '+kind;p.textContent=txt;$('note').textContent=note||''}
+const hora=ts=>new Date(ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',timeZone:TZ});
+
+function render(s,offline,ts){
+  const k=s.kpis,al=[];
+  if(k.enRiesgo)al.push(['bad',`<b>${k.enRiesgo} estudiantes</b> en riesgo de desvincularse.`]);
+  (s.alertas||[]).forEach(a=>{if(a.tipo!=='en_riesgo')al.push(['',`<b>${esc(a.cantidad)}</b> · ${esc(a.detalle)}`])});
+  if(!al.length)al.push(['ok','Sin alertas.']);
+  $('alerts').innerHTML=al.map(a=>`<div class="al ${a[0]}">${a[1]}</div>`).join('');
+  const K=[[k.activos,'INSCRIPCIONES ACTIVAS'],[k.bajas,'BAJAS'],[k.pct==null?'–':k.pct+'%','PRESENTES (CICLO)'],[k.trayectosConAlumnos+'/'+k.trayectos,'TRAYECTOS CON ALUMNOS'],[k.enRiesgo==null?'–':k.enRiesgo,'EN RIESGO']];
+  $('kpis').innerHTML=K.map(x=>`<div class="k"><div class="n">${esc(x[0])}</div><div class="l">${x[1]}</div></div>`).join('');
+  $('tray').innerHTML=(s.trayectos||[]).length?s.trayectos.map(t=>`<div class="hb"><span class="t">${esc(t.nombre)}<br><small style="color:var(--c2)">${esc(t.sede||'')} · ${t.activos} activos</small></span><span class="tr"><i style="width:${t.pct==null?0:t.pct}%"></i></span><span class="v">${t.pct==null?'sin datos':Math.round(t.pct)+'%'}</span></div>`).join(''):'<span class="muted">No hay trayectos con alumnos en este ciclo.</span>';
+  if(offline)setStatus('off','SIN CONEXIÓN','Mostrando datos guardados de las '+hora(ts)+'. El detalle con nombres necesita conexión.');
+}
+function renderRiesgo(g){
+  $('riesgo').innerHTML=g.length?g.map(t=>`<div class="card"><h4><span>${esc(t.trayecto)}</span><span>${t.items.length}</span></h4>${t.items.map(i=>`<div class="ri"><span>${esc(i.nombre)}<br><small>${esc(i.seguidas)} faltas seguidas · ${esc(i.pct)}% de asistencia</small></span><span style="text-align:right"><small>última presencia</small><br>${i.ultima?esc(String(i.ultima).slice(8,10)+'/'+String(i.ultima).slice(5,7)):'—'}</span></div>`).join('')}</div>`).join(''):'<div class="card muted">Ningún estudiante en riesgo con la regla actual (3 faltas seguidas o menos de 70%).</div>';
+}
+function renderResumen(r){
+  if(!r){$('resumen').innerHTML='<span class="muted">Todavía no hay resumen, o tu rol no lo puede ver.</span>';return}
+  const u=r.datos||{},a=u.asistencia_7d||{};
+  $('resumen').innerHTML=`<div class="muted" style="margin-bottom:6px">Generado el ${esc(new Date(r.creado_en).toLocaleDateString('es-AR',{day:'numeric',month:'numeric',timeZone:TZ}))}</div>
+  <div class="ri"><span>Inscripciones / bajas (7 días)</span><span>${esc(u.inscripciones_7d)} / ${esc(u.bajas_7d)}</span></div>
+  <div class="ri"><span>Asistencia (7 días)</span><span>${a.registros?Math.round(a.presentes/a.registros*100)+'% ('+a.presentes+'/'+a.registros+')':'sin datos'}</span></div>
+  <div class="ri"><span>Estudiantes en riesgo</span><span>${esc(u.en_riesgo)}</span></div>
+  <div class="ri"><span>Notificaciones sin leer</span><span>${esc(u.notificaciones_sin_leer)}</span></div>`;
+}
+
+/* ---------- Carga de datos ---------- */
+async function load(){
+  if(busy)return;busy=true;boost=1.4;setStatus('off','CONSULTANDO…','');
+  try{
+    const [rol,cif,pen,rie,res]=await Promise.allSettled([
+      client.rpc('mi_rol'),client.rpc('panel_cifras',{p_ciclo:ciclo}),client.rpc('pendientes_gestion'),
+      client.rpc('alertas_inasistencias',{}),client.get('/rest/v1/resumenes_semanales?select=creado_en,datos&order=id.desc&limit=1')]);
+    const sesionVencida=[rol,cif,pen,rie,res].some(x=>x.status==='rejected'&&x.reason&&x.reason.status===401);
+    if(sesionVencida){await client.logout();show(true);$('err').textContent='La sesión venció. Ingresá de nuevo.';return}
+    if(cif.status!=='fulfilled'){
+      const no=cif.reason&&(cif.reason.status===403||/No autorizado/.test(cif.reason.body||''));
+      if(no){setStatus('err','SIN PERMISO','Tu rol no puede ver este panel (hace falta administración, preceptoría o secretaría).');return}
+      throw cif.reason||new Error('sin datos');
+    }
+    const s=summarize(cif.value,rie.status==='fulfilled'?rie.value:[],pen.status==='fulfilled'?pen.value:[]);
+    if(rol.status==='fulfilled'&&rol.value)$('who').textContent=String(rol.value).toUpperCase()+' · '+(client.email()||'');
+    render(s,false);renderRiesgo(s.riesgo);renderResumen(res.status==='fulfilled'&&res.value&&res.value[0]||null);
+    const ts=Date.now();try{localStorage.setItem('nube_cache_'+ciclo,JSON.stringify({ts,s:publicCache(s)}))}catch(e){}
+    setStatus('live','● EN VIVO','Actualizado a las '+hora(ts));
+  }catch(e){
+    let c=null;try{c=JSON.parse(localStorage.getItem('nube_cache_'+ciclo)||'null')}catch(_){}
+    if(c){render(c.s,true,c.ts);$('riesgo').innerHTML='<div class="card muted">Sin conexión: el detalle con nombres no se guarda en el teléfono.</div>'}
+    else setStatus('err','SIN CONEXIÓN','No pude consultar los datos. Revisá tu conexión e intentá de nuevo.');
+  }finally{busy=false}
+}
+
+/* ---------- Eventos ---------- */
+$('fLogin').addEventListener('submit',async e=>{
+  e.preventDefault();const b=$('bLogin');$('err').textContent='';b.disabled=true;b.textContent='INGRESANDO…';
+  try{await client.login($('em').value.trim(),$('pw').value);$('pw').value='';start()}
+  catch(x){$('err').textContent=x&&x.status===400?'Email o contraseña incorrectos.':x&&x.status===429?'Demasiados intentos. Esperá un momento.':'No pude conectarme. Revisá tu conexión.'}
+  finally{b.disabled=false;b.textContent='INGRESAR'}
+});
+$('bRefresh').onclick=load;
+$('bOut').onclick=async()=>{await client.logout();Object.keys(localStorage).filter(k=>k.startsWith('nube_cache_')).forEach(k=>localStorage.removeItem(k));show(true)};
+document.querySelectorAll('[data-ciclo]').forEach(b=>b.onclick=()=>{ciclo=+b.dataset.ciclo;document.querySelectorAll('[data-ciclo]').forEach(x=>x.classList.toggle('sel',x===b));load()});
+setInterval(()=>{if(!document.hidden&&client.hasSession()&&!$('vApp').classList.contains('hide'))load()},300000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&client.hasSession()&&!$('vApp').classList.contains('hide'))load()});
+
+let started=false;
+function start(){show(false);greet();if(!started){started=true;cloud($('cv'),230)}
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  $('inst').textContent=standalone?'':'Para instalarla: en iPhone, Compartir → Añadir a pantalla de inicio. En Android, menú ⋮ → Instalar aplicación.';
+  load()}
+cloud($('cvL'),150);
+client.hasSession()?start():show(true);
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
